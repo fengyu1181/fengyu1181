@@ -1,1 +1,3 @@
+asdasdasdad
 asdasdasdasd
+asdasdasdasd如果出现这样的信息表明已经将本地Git仓库的内容推送向了GitHub的远程仓库。现在进入刚才那个“官方教程”页面，按F5刷新，如果之前的步骤没有弄错，稍等片刻你将看到你刚才“上传”的文件：
