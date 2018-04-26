@@ -1,0 +1,219 @@
+ip access-list 56
+  permit all 10.36.0.0 255.252.0.0 any any any 
+  deny all any any any any 
+!
+ip access-list 61
+  permit all 100.126.136.0 255.255.248.0 any any any 
+  deny all any any any any 
+!
+ip access-list 101
+  deny udp any any 135 any 
+  deny udp any any 139 any 
+  deny udp any any 7626 any 
+  deny udp any any 455 any 
+  deny udp any any 445 any 
+  deny udp any any 4444 any 
+  deny tcp any any 4444 any 
+  deny tcp any any 445 any 
+  deny tcp any any any 445 
+  deny tcp any any 7626 any 
+  deny tcp any any 139 any 
+  deny tcp any any 135 any 
+  deny tcp any any 69 any 
+!
+ip access-list 106
+  permit all 10.36.0.0 255.252.0.0 172.30.0.0 255.255.0.0 any any 
+  permit all 100.126.136.0 255.255.248.0 172.30.0.0 255.255.0.0 any any 
+  deny all any any any any 
+!
+ip access-list snmp
+  permit snmp 211.99.128.80 255.255.255.140 any 
+  permit snmp 211.99.128.64 255.255.255.224 any 
+  permit snmp 218.246.127.0 255.255.255.192 any 
+  permit snmp 172.30.1.0 255.255.255.0 any 
+  deny all any any any any 
+!
+ip access-list telnet
+  permit telnet 192.168.2.0 255.255.255.0 any 
+  permit telnet 211.99.128.80 255.255.255.240 any 
+  permit telnet 211.99.128.64 255.255.255.224 any 
+  permit telnet 218.246.127.0 255.255.255.192 any 
+  permit telnet 172.30.1.0 255.255.255.0 any 
+  permit ssh 211.99.128.80 255.255.255.240 any 
+  permit ssh 211.99.128.64 255.255.255.224 any 
+  permit ssh 218.246.127.0 255.255.255.192 any 
+  permit ssh 172.30.1.0 255.255.255.0 any 
+  permit ntp 218.246.127.55 255.255.255.255 any 
+  deny telnet any any 
+  deny ssh any any 
+  deny ntp any any 
+  deny http any any 
+  deny sunrpc any any 
+  deny sunrpc any any 
+  deny tcp any any 443 any 
+  deny tcp any any 8443 any 
+!
+!
+access-class in telnet
+
+!
+!
+!
+!
+route-map TELECOM permit 20
+  match ip address 106
+  set ip next-hop 10.1.2.17 
+
+!
+!
+route-map TELECOM permit 21
+  match ip address 56
+  set ip next-hop 10.1.28.81 
+
+!
+!
+route-map TELECOM permit 22
+  match ip address 61
+  set ip next-hop 10.1.42.73 
+
+!
+!
+!
+!
+!
+interface eth 6/0
+  ip address 192.168.2.100 255.255.255.0
+
+interface eth 7/0
+  ip address 192.168.2.101 255.255.255.0
+tacacs-server host 172.30.1.80
+tacacs-server key d3ae3f3793ba1f90cacd6dbe25182e02 7
+aaa authentication login default group tacacsplus
+aaa authentication enable default group tacacsplus enable
+aaa authentication login tacacsplus-local
+aaa accounting exec default start-stop group tacacsplus
+aaa tacacs-source loopback 0
+ ip policy route-map TELECOM
+  ip access-group 101
+cpe-class "iSTB"
+  dhcp option 60 "openCable2.0"
+
+no l2vpn mac-address-movable
+no l2vpn local-traffic-forwarding
+!casa logging control configuration:
+no logging system
+logging trap warnings
+logging source-interface loopback 0
+!
+!syslog servers for non-DOCSIS events:
+logging host 218.246.127.29
+logging host 172.30.1.166
+multicast load-balance initial-tech direct
+modulation-profile 1
+ request tdma qpsk off 64 0 16 338 0 16 fixed on 
+ initial tdma qpsk off 640 5 34 338 0 48 fixed on 
+ station tdma qpsk off 384 5 34 338 0 48 fixed on 
+ short tdma qpsk off 84 6 75 338 13 16 shortened on 
+ long tdma qpsk off 96 8 220 338 0 16 shortened on 
+
+modulation-profile 2
+ request tdma qpsk off 64 0 16 338 0 16 fixed on 
+ initial tdma qpsk off 640 5 34 338 0 48 fixed on 
+ station tdma qpsk off 384 5 34 338 0 48 fixed on 
+ short tdma 16qam off 168 6 75 338 7 16 shortened on 
+ long tdma 16qam off 192 8 220 338 0 16 shortened on 
+
+modulation-profile 3
+ request atdma qpsk off 64 0 16 338 0 16 fixed on 1 1536 qpsk0 
+ initial atdma qpsk off 640 5 34 338 0 48 fixed on 1 1536 qpsk0 
+ station atdma qpsk off 384 5 34 338 0 48 fixed on 1 1536 qpsk0 
+ a-short atdma 64qam off 104 12 75 338 6 16 shortened on 1 1536 qpsk1 
+ a-long atdma 64qam off 104 16 220 338 0 16 shortened on 1 1536 qpsk1 
+
+modulation-profile 4
+ request mtdma qpsk off 64 0 16 338 0 16 fixed on 1 1536 qpsk0 
+ initial mtdma qpsk off 640 5 34 338 0 48 fixed on 1 1536 qpsk0 
+ station mtdma qpsk off 384 5 34 338 0 48 fixed on 1 1536 qpsk0 
+ short mtdma 16qam off 168 6 75 338 7 16 shortened on 1 1536 qpsk1 
+ long mtdma 16qam off 192 8 220 338 0 16 shortened on 1 1536 qpsk1 
+ a-short mtdma 64qam off 104 12 75 338 6 16 shortened on 1 1536 qpsk1 
+ a-long mtdma 64qam off 104 16 220 338 0 16 shortened on 1 1536 qpsk1 
+
+modulation-profile 5
+ request scdma qpsk off 64 0 16 338 1 0 fixed on qpsk0 on 2 1 off 
+ initial scdma qpsk off 640 5 34 338 0 0 fixed on qpsk0 off 2 1 off 
+ station scdma qpsk off 512 5 34 338 0 0 fixed on qpsk0 off 2 1 off 
+ a-short scdma 128qam off 64 5 33 338 12 0 shortened on qpsk0 on 128 1 on 
+ a-long scdma 128qam off 64 10 156 338 0 0 shortened on qpsk0 on 128 1 on 
+
+modulation-profile 16
+ request atdma qpsk off 64 0 16 338 0 16 fixed on 1 1536 qpsk0 
+ initial atdma qpsk off 640 5 34 338 0 48 fixed on 1 1536 qpsk0 
+ station atdma qpsk off 384 5 34 338 0 48 fixed on 1 1536 qpsk0 
+ a-short atdma 16qam off 104 12 75 338 6 8 shortened on 1 1536 qpsk1 
+ a-long atdma 16qam off 104 16 220 338 0 8 shortened on 1 1536 qpsk1 
+
+modulation-profile 64
+ request atdma qpsk off 64 0 16 338 0 16 fixed on 1 1536 qpsk0 
+ initial atdma qpsk off 640 5 34 338 0 48 fixed on 1 1536 qpsk0 
+ station atdma qpsk off 384 5 34 338 0 48 fixed on 1 1536 qpsk0 
+ a-short atdma 64qam off 104 12 75 338 6 8 shortened on 1 1536 qpsk1 
+ a-long atdma 64qam off 104 16 220 338 0 8 shortened on 1 1536 qpsk1 
+ntp server 218.246.127.55
+monitor keepalive
+telnet timeout 10
+cable modem offline aging 24
+cable mdd extended tx-power support 0
+channel-utilization-interval 30
+arp request-interval 14400
+ha redundancy reboot
+load-balance enable
+
+
+load-balance basic-rule 1 
+  enable
+
+load-balance execution-rule 1
+  method modem
+  method utilization dynamic
+  threshold load 10 enforce 20 minimum 75
+  interval 200
+
+load-balance policy 1
+  rule execution 1
+  rule basic 1
+
+load-balance general-group default-settings  
+  policy-id 1
+  initial-tech direct
+  enable
+snmp trap-source loopback 0
+snmp community M1L24H22 ro security rotesting access-group snmp
+snmp comm-tbl M1L24H22 M1L24H22 rotesting - - - non-volatile 
+system monitor cpu 0 threshold 50
+system monitor cpu 1 threshold 50
+system monitor cpu 2 threshold 50
+system monitor cpu 3 threshold 50
+system monitor cpu 4 threshold 50
+system monitor cpu 5 threshold 50
+system monitor cpu smm threshold 50
+system monitor cpu 8 threshold 50
+system monitor cpu 9 threshold 50
+system monitor cpu 10 threshold 50
+system monitor cpu 11 threshold 50
+system monitor cpu 12 threshold 50
+system monitor cpu 13 threshold 50
+system monitor memory 0 threshold 2674
+system monitor memory 1 threshold 2674
+system monitor memory 2 threshold 2674
+system monitor memory 3 threshold 2674
+system monitor memory 4 threshold 834
+system monitor memory 5 threshold 834
+system monitor memory smm threshold 1756
+system monitor memory 8 threshold 834
+system monitor memory 9 threshold 834
+system monitor memory 10 threshold 834
+system monitor memory 11 threshold 834
+system monitor memory 12 threshold 834
+system monitor memory 13 threshold 834
+ip as-path access-list 10 permit ^$
