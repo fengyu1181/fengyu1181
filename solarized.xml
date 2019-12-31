@@ -1,0 +1,365 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bigscreen>
+    <theme>solarized</theme>
+    <property>
+        <dataInterval>60</dataInterval>
+        <maxDuration>500</maxDuration>
+	<fadeSpeed>1000</fadeSpeed>
+        <!-- transCountStalls -->
+        <!--
+        <transCountStalls>100,300,500,700,900</transCountStalls>
+        -->
+        <maxTransCount>1000</maxTransCount>
+    </property>
+    <layout name="bigscreen">
+        <item type="layout" name="linear" id="header-panel">
+            <item type="layout" name="linear" class="logo-wrapper">
+                <item type="module" name="placeholder" class="logo">
+                </item>
+            </item>
+            <item type="module" name="placeholder" class="divider-right">
+            </item>
+            <item type="module" name="flipCounter" id="flipCounter">
+                <title>交易总笔数:</title>
+                <maxDigits>8</maxDigits>
+                <maxDuration>50000</maxDuration>
+                <pace>600</pace>
+                <minDelta>19</minDelta>
+                <vFormat>0万0</vFormat>
+                <indicator>trans_count</indicator>
+                <!-- <indicator>int_TR_COUNT</indicator> -->
+                <dataset>
+                    <type>restbpc</type>
+                    <params>
+                        <cacheIdent>flipcounter</cacheIdent>
+                        <earliestTime>@d</earliestTime>
+                        <latestTime>alert_ts</latestTime>
+                        <dataSource>
+                            <spv>app1</spv>
+                            <cap>cap6</cap>
+			    <trans_type>代理付款</trans_type>
+                            <trans_type>普通转账付款</trans_type>
+                            <trans_type>资金划拨（上划和下拨）</trans_type>  
+                        </dataSource>
+                        <indicator>trans_count</indicator> 
+                        <!-- <indicator>int_TR_COUNT</indicator> -->
+                    </params>
+                </dataset>
+            </item>
+            <item type="module" name="labeltext" class="header-label">
+                <label>今日累计（0点~现在）</label>
+            </item> 
+            <item type="layout" name="linear" class="time-panel">
+                <item type="module" name="placeholder" class="divider-left">
+                </item>
+                <item type="module" name="time" id="time">
+                    <format>YYYY-MM-DD / HH:mm:ss</format>
+                    <format>dddd / uuuu</format>
+                    <updateInterval>1000</updateInterval>
+                </item>
+            </item>
+        </item>
+        <item type="layout" name="linear" class="map-panel">
+            <item type="layout" name="vertical" class="gradientgrid-panel">
+                <item type="module" name="titletext">
+                    <title>地区 TOP7(1天)</title>
+                </item>
+                <item type="module" name="labeltext">
+                    <label>1天累计：</label>
+                </item>
+                <item type="module" name="gradientgrid" id="gradientgrid">
+                    <dataset>
+                        <type>restbpc</type>
+                        <params>
+                            <cacheIdent>gradientgrid</cacheIdent>
+                            <earliestTime>@d</earliestTime>
+                            <latestTime>alert_ts</latestTime>
+                            <dimension>PayAreaCode</dimension>
+				<dataSource>
+                            	    <spv>app1</spv>
+                            	    <cap>cap6</cap>
+				    <trans_type>代理付款</trans_type>
+                                    <trans_type>普通转账付款</trans_type>
+                                    <trans_type>资金划拨（上划和下拨）</trans_type>
+                        	</dataSource>
+                            <indicator>trans_count</indicator>
+                            <limit>7</limit>
+                            <sort order="desc">trans_count</sort>
+                        </params>
+                    </dataset>
+                    <limit>7</limit>
+                    <fadeSpeed>1000</fadeSpeed>
+                    <dataConversion>
+                        <trans_count>
+                        <name>trans_count</name>
+                        </trans_count>
+                    </dataConversion>
+                    <displaySequence>true</displaySequence>
+                    <column>
+                        <type>text</type>
+                        <value>PayAreaCode</value>
+                    </column>
+                    <column>
+                        <type>indicator</type>
+                        <value>trans_count</value>
+                        <dataConversion>
+                            <name>trans_count</name>
+                        </dataConversion>
+                    </column>
+                </item>
+            </item>
+            <item type="module" name="heatmap" id="heatmap">
+                <dataset>
+                    <type>restbpc</type>
+                    <params>
+                        <cacheIdent>heatmap</cacheIdent>
+                        <earliestTime>@d</earliestTime>
+                        <latestTime>alert_ts</latestTime>
+                        <dimension>PayAreaCode</dimension>
+			<dataSource>
+                                <spv>app1</spv>
+                                <cap>cap6</cap>
+	                        <trans_type>代理付款</trans_type>
+                                <trans_type>普通转账付款</trans_type>
+                                <trans_type>资金划拨（上划和下拨）</trans_type>
+                        </dataSource>
+                        <indicator>trans_count</indicator>
+                        <extendData type="addTotals">
+                            <indicator>trans_count</indicator>
+                            <alias name="trans_count_total">trans_count</alias>
+                        </extendData>
+                    </params>
+                </dataset>
+                <regionField>PayAreaCode</regionField>
+                <value>trans_count</value>
+                <width>840</width>
+                <height>700</height>
+                <series>
+                    <height>600</height>
+                    <top>100</top>
+                    <left>25</left>
+		    <nameMap>
+		    <![CDATA[{"北京":"北京","天津":"天津","西安":"西安","上海":"上海","武汉":"武汉","广州":"广州","香港":"香港","洋浦":"洋浦"}]]>
+		    </nameMap>
+		    <geoCoord>
+		    <![CDATA[{"北京":[116.23,39.54],"天津":[117.20,39.12],"西安":[107.40,33.42],"上海":[121.29,31.11],"武汉":[113.41,30.58],"广州":[113.27,23.12],"香港":[114.15,22.15],"洋浦":[109.11,19.43]}]]>
+		    </geoCoord>
+                </series>
+                <map>china</map>
+                <visualMap>
+                    <ploy>pyramidPiece</ploy>
+                    <textStyle>
+                        <color>#fff</color>
+                    </textStyle>
+                    <bottom>10</bottom>
+                    <left>70</left>
+                </visualMap>
+                <mapBubble>
+                    <grouper>
+                        <concurrent>4</concurrent>
+                    </grouper>
+                </mapBubble>
+                <dataConversion>
+                    <name>trans_count</name>
+                </dataConversion>
+                <valueTotal>trans_count_total</valueTotal>
+            </item>
+            <item type="layout" name="vertical" class="ratiogrid-panel">
+                <item type="module" name="titletext">
+                    <title>交易类型 TOP(当日)</title>
+                </item>
+                <item type="module" name="labeltext">
+                <label>趋势    交易类型                当日笔数            与昨日同比       占总比</label>
+                </item>
+                <item type="module" name="normalgrid" id="ratiogrid">
+                    <dataset>
+                        <type>restbpc</type>
+                        <params>
+                            <cacheIdent>ratiogrid</cacheIdent>
+                            <earliestTime>@d</earliestTime>
+                            <latestTime>alert_ts</latestTime>
+                            <dimension>trans_type</dimension>
+			    <dataSource>
+                                <spv>app1</spv>
+                                <cap>cap6</cap>
+				<trans_type>代理付款</trans_type>
+                                <trans_type>普通转账付款</trans_type>
+                                <trans_type>资金划拨（上划和下拨）</trans_type>
+                            </dataSource>
+                            <indicator>trans_count</indicator>
+                            <limit>5</limit>
+                            <sort order="desc">trans_count</sort>
+                            <extendData type="addTotals">
+                                <cacheIdent>ratiogrid_addtotals</cacheIdent>
+                                <indicator>trans_count</indicator>
+                                <alias name="trans_count_total">trans_count</alias>
+                            </extendData>
+                            <extendData type="join">
+                                <cacheIdent>ratiogrid_join</cacheIdent>
+                                <earliestTime>-1d@d</earliestTime>
+                                <latestTime>-1d!</latestTime>
+                                <dimension>trans_type</dimension>
+			    <dataSource>
+                                <spv>app1</spv>
+                                <cap>cap6</cap>
+				 <trans_type>代理付款</trans_type>
+                                 <trans_type>普通转账付款</trans_type>
+                           	 <trans_type>资金划拨（上划和下拨）</trans_type>
+                            </dataSource>
+                                <indicator>trans_count</indicator>
+                                <limit>5</limit>
+                                <sort order="desc">trans_count</sort>
+                                <alias name="trans_count_before">trans_count</alias>
+                            </extendData>
+                        </params>
+                    </dataset>
+                    <sortby>trans_count</sortby>
+                    <limit>4</limit>
+                    <dataFilter>
+                        <![CDATA[trans_type!="贷款利息试算"]]>
+                    </dataFilter>
+                    <fadeSpeed>1000</fadeSpeed>
+                    <columnSeparatorStyle>
+                        <width>10</width>
+                        <height>40</height>
+                        <strokeColor>#000</strokeColor>
+                        <strokeWidth>2</strokeWidth>
+                        <points>0,0 10,20 0,40</points>
+                    </columnSeparatorStyle>
+                    <displaySequence>true</displaySequence>
+                    <gradientTop>3</gradientTop>
+                    <dataConversion>
+                        <trans_count>
+                        <name>trans_count</name>
+                        </trans_count>
+                    </dataConversion>
+                    <column>
+                        <type>corner</type>
+                        <direction>topleft</direction>
+                        <value>trans_count/trans_count_before</value>
+                    </column>
+                    <column>
+                        <type>text</type>
+                        <value>trans_type</value>
+                    </column>
+                    <column>
+                        <type>indicator</type>
+                        <value>trans_count</value>
+                        <dataConversion>
+                            <name>trans_count</name>
+                            <decimal>1</decimal>
+                        </dataConversion>
+                    </column>
+                    <column>
+                        <type>ratio</type>
+                        <value>trans_count/trans_count_before</value>
+                    </column>
+                    <column>
+                        <type>circle</type>
+                        <value>trans_count/trans_count_total*100</value>
+                    </column>
+                </item>
+            </item>
+        </item>
+        <item type="layout" name="vertical" class="biztile-panel">
+            <item type="layout" name="linear" class="biztile-title">
+                <item type="module" name="titletext">
+                    <title>重要应用</title>
+                </item>
+                <item type="module" name="labeltext">
+                    <label>最近1小时    同比</label>
+                </item>
+            </item>
+            <item type="module" name="bizTilePack" id="biztile-1">
+                <tiles>
+                    <value>cap</value>
+                    <tile id="cap7">招商银行</tile>	
+                    <tile id="cap8">交通银行</tile>
+                    <tile id="cap9">农业银行</tile>
+                    <tile id="cap10">工商银行</tile>
+                    <tile id="cap6">银企(软通)</tile>
+                </tiles>
+                <direction>row</direction>
+                <fadeSpeed>1000</fadeSpeed>
+                <dataset>
+                    <type>restbpc</type>
+                    <params>
+                        <cacheIdent>biztile_1</cacheIdent>
+                        <earliestTime>-1h!</earliestTime>
+                        <latestTime>alert_ts</latestTime>
+                        <dimension>cap</dimension>
+                        <dataSource>
+                            <spv>app1</spv>
+		            <cap>cap7</cap>
+                            <cap>cap8</cap>
+                            <cap>cap9</cap>
+                            <cap>cap10</cap>
+		            <cap>cap6</cap>
+                        </dataSource>
+                        <indicator>trans_count</indicator>
+                        <indicator>succ_rate</indicator>
+                        <indicator>duration</indicator>
+                        <extendData type="join">
+                            <cacheIdent>biztile_1_join</cacheIdent>
+                            <earliestTime>-2h!</earliestTime>
+                            <latestTime>-1h!</latestTime>
+                            <dimension>cap</dimension>
+                            <dataSource>
+                                <spv>app1</spv>
+			        <cap>cap7</cap>
+                                <cap>cap8</cap>
+                                <cap>cap9</cap>
+                                <cap>cap10</cap>
+			        <cap>cap6</cap>
+                            </dataSource>
+                            <indicator>trans_count</indicator>
+                            <indicator>succ_rate</indicator>
+                            <indicator>duration</indicator>
+                            <alias name="trans_count_before">trans_count</alias>
+                            <alias name="succ_rate_before">succ_rate</alias>
+                            <alias name="duration_before">duration</alias>
+                        </extendData>
+                    </params>
+                </dataset>
+                <row>
+                    <value>trans_count/60</value>
+                    <valueBefore>trans_count_before/60</valueBefore>
+                    <dispName>TPMC</dispName>
+                    <dataConversion>
+                        <name>customize</name>
+                        <unit>/min</unit>
+                    </dataConversion>
+                </row>
+                <row>
+                    <value>succ_rate</value>
+                    <valueBefore>succ_rate_before</valueBefore>
+                    <dispName>成功率</dispName>
+                    <dataConversion>
+                        <name>percentage</name>
+                    </dataConversion>
+                </row>
+                <row>
+                    <value>duration</value>
+                    <valueBefore>duration_before</valueBefore>
+                    <hasProgress>true</hasProgress>
+                    <section>
+                        <max>5000</max>
+                        <color>#00ff9d</color>
+                    </section>
+                    <section>
+                        <max>10000</max>
+                        <color>#ffad4a</color>
+                    </section>
+                    <section>
+                        <max>20000</max>
+                        <color>#fe402a</color>
+                    </section>
+                    <dispName>响应时间</dispName>
+                    <dataConversion>
+                        <name>duration</name>
+                    </dataConversion>
+                </row>
+            </item>
+       </item>
+    </layout>
+</bigscreen>
